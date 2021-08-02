@@ -56,7 +56,7 @@ from employee where pub_id in (select pub_id from publishers  where pub_name = '
 
 
 --Explore the function soundex. show an example query
-select soundex('Marjorie Green' ), soundex('Morningstar Greene')
+select soundex('Marjorie' ), soundex('Morningstar ')
 
 --print the total sales(price*quantity) for every city in the author table
 select a.city as'City',t.price*s.qty as 'Total Sales' from authors a
