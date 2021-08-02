@@ -1,0 +1,65 @@
+use pubs
+
+--print the employee name and the number of titles each of them have published
+select concat(e.fname,' ',e.minit,' ',e.lname) as 'Employee Name',count(*) as 'No_of Titles'
+from employee e left outer join titles t on e.pub_id =t.pub_id
+group by concat(e.fname,' ',e.minit,' ',e.lname)
+order by 1
+
+--print the store name, title name, total price , quantity, price, publisher name for every book
+select st.stor_name as'Store Name',t.title as'Book Name',s.qty*t.price as 'Total price',s.qty as 'Quantity',t.price as 'Price',p.pub_name as 'Publisher name'
+from stores st  join sales s on st.stor_id=s.stor_id
+join titles t on s.title_id=t.title_id
+join publishers p on t.pub_id=p.pub_id
+
+-- print every book name and  its author 's full name
+select concat(a.au_fname,' ',a.au_lname) as 'Author Name',t.title as 'Book Name'
+from authors a join titleauthor ta on a.au_id= ta.au_id 
+join titles t on t.title_id=ta.title_id
+
+--print the author's full name and number of books written by each
+select concat(a.au_fname,' ',a.au_lname) as 'Author Name' ,count(*) as 'No_of_Books'
+from authors a join titleauthor ta on a.au_id= ta.au_id 
+group by concat(a.au_fname,' ',a.au_lname)
+
+--print the author full name, publisher's name, title name, quantity sold, store name and the store address of all the books.
+select concat(a.au_fname,' ',a.au_lname) as 'Author Name',p.pub_name as 'Publisher name',t.title as'Book Name',s.qty 'Quantity Sold',st.stor_name as'Store Name',
+st.stor_address as'Store Address' from titles t 
+left outer join titleauthor ta on ta.title_id=t.title_id 
+left outer join publishers p on t.pub_id=p.pub_id
+left outer join sales s on s.title_id=t.title_id
+left outer join stores st on s.stor_id=st.stor_id
+left outer join authors a on a.au_id= ta.au_id 
+
+--select author name and the average quantity sold for every author
+select concat(a.au_fname,' ',a.au_lname) as 'Author Name',avg(s.qty) as 'Average Quantity'
+from authors a left outer join titleauthor ta on a.au_id= ta.au_id 
+left outer join titles t  on ta.title_id=t.title_id 
+left outer join sales s on s.title_id=t.title_id
+group by concat(a.au_fname,' ',a.au_lname)
+
+--print the store name and address of all the sales for a given title
+select stor_name as'Store Name',stor_address as'Store Address'
+from stores where stor_id in(select stor_id from sales where title_id in(select title_id from titles 
+where title='The Gourmet Microwave'))
+
+--what is the max quantity sold for every publisher?
+select p.pub_name as'Publisher Name',max(s.qty)as'Max quantity' from publishers p
+left outer join titles t on t.pub_id=p.pub_id
+left outer join sales s on t.title_id=s.title_id
+group by p.pub_name
+
+--print the employee names for a given publisher
+
+select concat(fname,' ',minit,' ',lname) as 'Employee Name'
+from employee where pub_id in (select pub_id from publishers  where pub_name = 'New Moon Books')
+
+
+--Explore the function soundex. show an example query
+select soundex('Marjorie Green' ), soundex('Morningstar Greene')
+
+--print the total sales(price*quantity) for every city in the author table
+select a.city as'City',t.price*s.qty as 'Total Sales' from authors a
+left outer  join titleauthor ta on a.au_id= ta.au_id 
+left outer join titles t on ta.title_id=t.title_id 
+left outer  join sales s on s.title_id=t.title_id
