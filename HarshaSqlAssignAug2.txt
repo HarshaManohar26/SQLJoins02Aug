@@ -59,7 +59,14 @@ from employee where pub_id in (select pub_id from publishers  where pub_name = '
 select soundex('Marjorie' ), soundex('Morningstar ')
 
 --print the total sales(price*quantity) for every city in the author table
-select a.city as'City',t.price*s.qty as 'Total Sales' from authors a
+select a.city as'City', sum(t.price*s.qty)  as 'Total Sales'  from authors a
 left outer  join titleauthor ta on a.au_id= ta.au_id 
 left outer join titles t on ta.title_id=t.title_id 
 left outer  join sales s on s.title_id=t.title_id
+group by a.city
+
+--sort by date and print the store name and the latest purchase done by every store
+select  st.stor_name as 'Store name',max(ord_date) as 'latest purchase'  from stores st
+join sales s on st.stor_id = s.stor_id
+group by st.stor_name
+order by max(ord_date)
